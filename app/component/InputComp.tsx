@@ -18,7 +18,6 @@ export default function InputComp(prop:inputCompInf){
               {...register(registerName,{onChange:onchange})}
               disabled={isDisable}
               />
-              
               <span className="text-red-600">{_.get(error,`${registerName}`)?.message}</span>
           </div>
     </>)

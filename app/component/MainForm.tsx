@@ -6,19 +6,23 @@ import InputComp from "./InputComp";
 import CardComp from "./CardComp";
 import SelectComp from "./SelectComp";
 import BtnComp from "./BtnComp";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RadioComp from "./RadioComp";
 import ModalComp from "./ModalComp";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { modalSchema } from "../yupValidations/modalValidation";
 import { addCustomerDetails } from "../RTK/Features/customer/customerSlice";
-import { customerDetailsInf, shutterDetailsInf } from "../interfaces/compInterface";
-import { addItem } from "../RTK/Features/shutterSell/shutterSellSlice";
+import { shutterDetailsInf } from "../interfaces/compInterface";
+import { addItem, updateItem } from "../RTK/Features/shutterSell/shutterSellSlice";
 import { mainFormSchema } from "../yupValidations/mainFormValidation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function MainForm() {
   const dispatch = useDispatch();
-  const { register, handleSubmit, control, watch, setValue,formState:{errors} } = useForm({
+  const searchparam = useSearchParams()
+  const id = searchparam.get('id')
+  const shutterSellListArr = useSelector((state:any)=>state.shutterSellList) 
+  const { register, handleSubmit, control, watch,reset, setValue,formState:{errors} } = useForm({
     resolver:yupResolver(mainFormSchema),
     defaultValues: {
       dList: [{ shutterName: "", width: "", height: "", area: "" }],
@@ -27,6 +31,9 @@ export default function MainForm() {
       customerName: "",
     },
   });
+  useEffect(()=>{
+    id && reset(shutterSellListArr[id])
+  },[])
   const {
     register: modalRegister,
     handleSubmit: modalHandalSubmit,
@@ -37,9 +44,11 @@ export default function MainForm() {
     control,
     name: "dList",
   });
+  const navigate = useRouter()
   const [showModal, setShowModal] = useState(false);
   function onSubmit(data: any) {
-    dispatch(addItem(data));
+    id ? dispatch(updateItem({id:id,data:data})): dispatch(addItem(data));
+    navigate.push('/List');
     console.log(data);
   }
   const dListWatch:shutterDetailsInf[]|undefined = watch("dList") ;
@@ -236,6 +245,7 @@ export default function MainForm() {
           btnText="+ customer"
           title="Add Customer"
           onclick={modalHandalSubmit((data) => {
+            
             dispatch(addCustomerDetails(data));
             modalReset();
             setShowModal(false);

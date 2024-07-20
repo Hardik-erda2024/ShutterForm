@@ -24,8 +24,14 @@ const shutterSellSlice = createSlice({
     addItem: (state, action) => {
       state.push(action.payload);
     },
+    updateItem:(state,action)=>{
+      state[action.payload.id] = action.payload.data;
+    },
+    deleteItem:(state,action)=>{
+      state.splice(action.payload,1);
+    }
   },
 });
 
-export const { addItem } = shutterSellSlice.actions;
+export const { addItem,updateItem,deleteItem } = shutterSellSlice.actions;
 export default shutterSellSlice.reducer;

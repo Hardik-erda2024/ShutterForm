@@ -42,6 +42,7 @@ export interface btnCompInf {
   text: string;
   color: string;
   onclick: any;
+  solid?: boolean;
 }
 
 export interface radioCompInf {
@@ -71,3 +72,4 @@ export interface shutterDetailsInf{
   height:string;
   area?:string;
 }
+
