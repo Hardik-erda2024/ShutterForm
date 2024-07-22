@@ -13,27 +13,40 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { modalSchema } from "../yupValidations/modalValidation";
 import { addCustomerDetails } from "../RTK/Features/customer/customerSlice";
 import { shutterDetailsInf } from "../interfaces/compInterface";
-import { addItem, updateItem } from "../RTK/Features/shutterSell/shutterSellSlice";
+import {
+  addItem,
+  updateItem,
+} from "../RTK/Features/shutterSell/shutterSellSlice";
 import { mainFormSchema } from "../yupValidations/mainFormValidation";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function MainForm() {
   const dispatch = useDispatch();
-  const searchparam = useSearchParams()
-  const id = searchparam.get('id')
-  const shutterSellListArr = useSelector((state:any)=>state.shutterSellList) 
-  const { register, handleSubmit, control, watch,reset, setValue,formState:{errors} } = useForm({
-    resolver:yupResolver(mainFormSchema),
+  const searchparam = useSearchParams();
+  const id = searchparam.get("id");
+  const shutterSellListArr = useSelector((state: any) => state.shutterSellList);
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(mainFormSchema),
     defaultValues: {
       dList: [{ shutterName: "", width: "", height: "", area: "" }],
       discount: "0",
       discountType: "Ammount",
       customerName: "",
+      finalAmount:"0"
     },
   });
-  useEffect(()=>{
-    id && reset(shutterSellListArr[id])
-  },[])
+  useEffect(() => {
+    id && reset({...shutterSellListArr[id],finalAmount:Total});
+  }, []);
   const {
     register: modalRegister,
     handleSubmit: modalHandalSubmit,
@@ -44,21 +57,23 @@ export default function MainForm() {
     control,
     name: "dList",
   });
-  const navigate = useRouter()
+  const navigate = useRouter();
   const [showModal, setShowModal] = useState(false);
   function onSubmit(data: any) {
-    id ? dispatch(updateItem({id:id,data:data})): dispatch(addItem(data));
-    navigate.push('/List');
+    id ? dispatch(updateItem({ id: id, data: data })) : dispatch(addItem(data));
+    navigate.push("/List");
     console.log(data);
   }
-  const dListWatch:shutterDetailsInf[]|undefined = watch("dList") ;
-  
+  const dListWatch: shutterDetailsInf[] | undefined = watch("dList");
+
   const discountWatch = watch("discount");
   const discountTypeWatch = watch("discountType");
-  const Total = sumOfArray(dListWatch ? dListWatch.map((item: any) => Number(item.area)):[0]);
-
+  const Total = sumOfArray(
+    dListWatch ? dListWatch.map((item: any) => Number(item.area)) : [0]
+  );
+  useEffect(()=>{setValue('finalAmount',String(Total))},[Total])
   const customers = useSelector((state: any) => state.customerDetails);
-  const shutterList = useSelector((state:any)=> state.shutterList);
+  const shutterList = useSelector((state: any) => state.shutterList);
   function sumOfArray(arr: number[]) {
     let sum = 0;
     arr.forEach((item) => (sum += item));
@@ -134,7 +149,8 @@ export default function MainForm() {
                   setValue(
                     `dList.${index}.area`,
                     String(
-                      Number(e.target.value) * Number(dListWatch && dListWatch[index].height)
+                      Number(e.target.value) *
+                        Number(dListWatch && dListWatch[index].height)
                     )
                   );
                 }}
@@ -149,7 +165,8 @@ export default function MainForm() {
                   setValue(
                     `dList.${index}.area`,
                     String(
-                      Number(e.target.value) * Number(dListWatch && dListWatch[index].width)
+                      Number(e.target.value) *
+                        Number(dListWatch && dListWatch[index].width)
                     )
                   );
                 }}
@@ -177,7 +194,19 @@ export default function MainForm() {
                 text="Clone"
                 color="blue"
                 onclick={() => {
-                  insert(index + 1,dListWatch? dListWatch[index]:[{shutterName:"",area:"0",height:"0",width:"0"}]);
+                  insert(
+                    index + 1,
+                    dListWatch
+                      ? dListWatch[index]
+                      : [
+                          {
+                            shutterName: "",
+                            area: "0",
+                            height: "0",
+                            width: "0",
+                          },
+                        ]
+                  );
                 }}
               />
             </div>
@@ -191,6 +220,7 @@ export default function MainForm() {
           >
             + Add
           </button>
+          <InputComp htmlFor="total" register={register} registerName="finalAmount" label="Total" type="text" isDisable={true}/>
         </CardComp>
         <CardComp title="Discount">
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 mt-4">
@@ -200,7 +230,7 @@ export default function MainForm() {
                 <RadioComp
                   register={register}
                   registerName="discountType"
-                  value={["Ammount","Percentage"]}
+                  value={["Ammount", "Percentage"]}
                   error={errors}
                 />
               </div>
@@ -229,7 +259,7 @@ export default function MainForm() {
                   ? Number(discountWatch) < Total &&
                     "$ " + (Total - Number(discountWatch))
                   : Number(discountWatch) < 100 &&
-                    "$ " + (Total -(( Total * Number(discountWatch)) / 100))}
+                    "$ " + (Total - (Total * Number(discountWatch)) / 100)}
               </p>
             </CardComp>
           </div>
@@ -245,7 +275,6 @@ export default function MainForm() {
           btnText="+ customer"
           title="Add Customer"
           onclick={modalHandalSubmit((data) => {
-            
             dispatch(addCustomerDetails(data));
             modalReset();
             setShowModal(false);
