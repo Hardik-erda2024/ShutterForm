@@ -15,6 +15,7 @@ const initialState = [
     customerName: "Hardik",
     personName: "jax",
     dueDate: "2024-07-20",
+    finalAmount:"375"
   },
 ];
 const shutterSellSlice = createSlice({
