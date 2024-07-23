@@ -8,7 +8,7 @@ export const mainFormSchema = yup.object({
       area:yup.string()
     })
   ),
-  discount:yup.string().matches(/^[0-9]+$/, "Only number allowed").required("discount required").test("discount error","Must be between 0 or 100",(value,contaxt)=>{return contaxt.parent.discountType ==="Ammount"?Number(contaxt.parent.finalAmount)>=Number(value):Number(value)<=100}),
+  discount:yup.string().matches(/^[0-9]+$/, "Only number allowed").required("discount required").test("discount error","Must be less then total",(value,contaxt)=>{return contaxt.parent.discountType ==="Ammount"?Number(contaxt.parent.finalAmount)>=Number(value):Number(value)<=100}),
   discountType:yup.string().required("select any one"),
   customerName:yup.string().required("select any one"),
   personName:yup.string().required("person Name required"),

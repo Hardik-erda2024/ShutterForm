@@ -1,13 +1,13 @@
 "use client";
+import { Providers } from "./RTK/provider";
+import { store } from "./RTK/store";
+// import { Providers } from "./RTK/provider";
+import BtnComp from "./component/BtnComp";
 import MainForm from "./component/MainForm";
-import { useSelector } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 
 export default function Home() {
-  const count = useSelector((state: any) => state.counter.value);
   return (
-    <>
       <MainForm />
-      <h1>{count}</h1>
-    </>
   );
 }

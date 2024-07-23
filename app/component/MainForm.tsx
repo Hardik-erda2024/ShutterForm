@@ -81,6 +81,7 @@ export default function MainForm() {
   }
   return (
     <>
+    <BtnComp color="blue" text="Listing Page" onclick={()=>navigate.push("/List")} solid={true}/>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-1/2 mx-auto mt-5 flex flex-col"

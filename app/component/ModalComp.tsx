@@ -1,4 +1,3 @@
-import { useRef, useState } from "react";
 import { ModalCompInf } from "../interfaces/compInterface";
 
 export default function ModalComp(prop:ModalCompInf) {
