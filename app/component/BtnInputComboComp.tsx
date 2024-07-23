@@ -1,6 +1,6 @@
 import { btnInputComboCompInf } from "../interfaces/compInterface";
 
-export default function (prop: btnInputComboCompInf) {
+export const btnInputComboComp = (prop: btnInputComboCompInf) =>{
   const {
     htmlFor,
     label,

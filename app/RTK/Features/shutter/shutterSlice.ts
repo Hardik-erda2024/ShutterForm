@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = ['Red shutter']
+const initialState = ['Red shutter','Blue shutter','Green shutter']
 export const shutterSlice = createSlice({
     name:"shutterList",
     initialState,
