@@ -252,14 +252,14 @@ export default function MainForm() {
                 <strong>Discount:</strong>{" "}
                 {discountTypeWatch === "Ammount"
                   ? Number(discountWatch) < Total && "$ " + discountWatch
-                  : Number(discountWatch) < 100 && discountWatch + " %"}
+                  : Number(discountWatch) <= 100 && discountWatch + " %"}
               </p>
               <p>
                 <strong>After discount:</strong>{" "}
                 {discountTypeWatch === "Ammount"
                   ? Number(discountWatch) < Total &&
                     "$ " + (Total - Number(discountWatch))
-                  : Number(discountWatch) < 100 &&
+                  : Number(discountWatch) <= 100 &&
                     "$ " + (Total - (Total * Number(discountWatch)) / 100)}
               </p>
             </CardComp>
