@@ -19,7 +19,7 @@ import {
 } from "../RTK/Features/shutterSell/shutterSellSlice";
 import { mainFormSchema } from "../yupValidations/mainFormValidation";
 import { useRouter, useSearchParams } from "next/navigation";
-import { DndContext, closestCorners } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, closestCorners } from "@dnd-kit/core";
 import {
   SortableContext,
   useSortable,
@@ -60,7 +60,7 @@ export default function MainForm() {
     reset: modalReset,
     formState: { errors: modalError },
   } = useForm({ resolver: yupResolver(modalSchema) });
-  const { fields, append, remove, insert } = useFieldArray({
+  const { fields, append, remove, insert,move } = useFieldArray({
     control,
     name: "dList",
   });
@@ -86,6 +86,15 @@ export default function MainForm() {
     let sum = 0;
     arr.forEach((item) => (sum += item));
     return sum;
+  }
+  const handleDragEnd = (e:DragEndEvent)=>{
+    if(!e.over) return;
+    if(e.over.id !== e.active.id){
+      const oldIndex = fields.findIndex((item)=>item.id == e.active.id)
+      const newIndex = fields.findIndex((item)=>item.id == e.over?.id)
+      move(oldIndex,newIndex)
+    }
+
   }
   return (
     <>
@@ -125,7 +134,6 @@ export default function MainForm() {
                 register={register}
                 registerName="customerName"
                 value={customers.customers.map((item: any) => item.modal.Name)}
-                // value={['hardik']}
                 error={errors}
               />
             </div>
@@ -140,102 +148,13 @@ export default function MainForm() {
           />
         </div>
         <CardComp title="shutter Details">
-          {/* <DndContext collisionDetection={closestCorners}>
+          <DndContext collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
             <SortableContext strategy={ verticalListSortingStrategy} items={fields}>
-              {fields.map(field=>
-                <SortableComp id={field.id} />
+              {fields.map((field,index)=>
+                <SortableComp id={field.id} index={index} register={register} shutterList={shutterList} errors={errors} setValue={setValue} dListWatch={dListWatch} remove={remove} insert={insert} />
                 )}
             </SortableContext>
-          </DndContext> */}
-          {fields.map((field, index) => (
-            <div
-              className="grid grid-cols-1 gap-6 sm:grid-cols-6 mt-4"
-              key={field.id}
-            >
-              <SelectComp
-                htmlFor="shutterName"
-                label="Shutter Name"
-                register={register}
-                registerName={`dList.${index}.shutterName`}
-                value={shutterList}
-                error={errors}
-              />
-              <InputComp
-                htmlFor="width"
-                label="Width"
-                register={register}
-                registerName={`dList.${index}.width`}
-                type="text"
-                placeholder="0"
-                error={errors}
-                onchange={(e: any) => {
-                  setValue(
-                    `dList.${index}.area`,
-                    String(
-                      Number(e.target.value) *
-                        Number(dListWatch && dListWatch[index].height)
-                    )
-                  );
-                }}
-              />
-              <InputComp
-                htmlFor="height"
-                label="Height"
-                register={register}
-                registerName={`dList.${index}.height`}
-                error={errors}
-                placeholder="0"
-                onchange={(e: any) => {
-                  setValue(
-                    `dList.${index}.area`,
-                    String(
-                      Number(e.target.value) *
-                        Number(dListWatch && dListWatch[index].width)
-                    )
-                  );
-                }}
-                type="text"
-              />
-
-              <InputComp
-                htmlFor="area"
-                label="Area"
-                register={register}
-                registerName={`dList.${index}.area`}
-                isDisable={true}
-                type="text"
-                error={errors}
-                placeholder="0"
-              />
-
-              <BtnComp
-                text="Remove"
-                color="blue"
-                onclick={() => {
-                  remove(index);
-                }}
-              />
-              <BtnComp
-                text="Clone"
-                color="blue"
-                onclick={() => {
-                  insert(
-                    index + 1,
-                    dListWatch
-                      ? dListWatch[index]
-                      : [
-                          {
-                            shutterName: "",
-                            area: "",
-                            height: "",
-                            width: "",
-                          },
-                        ]
-                  );
-                }}
-              />
-            </div>
-          ))}
+          </DndContext>
           <button
             onClick={(e) => {
               e.preventDefault();
