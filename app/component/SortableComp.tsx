@@ -18,6 +18,7 @@ function SortableComp(props: any) {
     dListWatch,
     remove,
     insert,
+    key
   } = props;
   return (
     <div
@@ -28,7 +29,7 @@ function SortableComp(props: any) {
         transform: CSS.Transform.toString(transform),
         transition: transition,
       }}
-      key={id}
+      key={key}
     >
       <span className="self-end mb-3 me-2 cursor-move" {...listeners}>
         <svg

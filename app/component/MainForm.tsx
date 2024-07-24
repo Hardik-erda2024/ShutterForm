@@ -151,7 +151,7 @@ export default function MainForm() {
           <DndContext collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
             <SortableContext strategy={ verticalListSortingStrategy} items={fields}>
               {fields.map((field,index)=>
-                <SortableComp id={field.id} index={index} register={register} shutterList={shutterList} errors={errors} setValue={setValue} dListWatch={dListWatch} remove={remove} insert={insert} />
+                <SortableComp id={field.id} index={index} register={register} shutterList={shutterList} errors={errors} setValue={setValue} dListWatch={dListWatch} remove={remove} insert={insert} key={field.id} />
                 )}
             </SortableContext>
           </DndContext>
