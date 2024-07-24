@@ -19,6 +19,13 @@ import {
 } from "../RTK/Features/shutterSell/shutterSellSlice";
 import { mainFormSchema } from "../yupValidations/mainFormValidation";
 import { useRouter, useSearchParams } from "next/navigation";
+import { DndContext, closestCorners } from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import SortableComp from "./SortableComp";
 
 export default function MainForm() {
   const dispatch = useDispatch();
@@ -36,17 +43,17 @@ export default function MainForm() {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(mainFormSchema),
-    defaultValues: {
-      dList: [{ shutterName: "", width: "", height: "", area: "" }],
-      discount: "0",
-      discountType: "Ammount",
-      customerName: "",
-      finalAmount:"0"
-    },
+    defaultValues:
+      shutterSellListArr && id !== null
+        ? shutterSellListArr[id]
+        : {
+            dList: [{ shutterName: "", width: "", height: "", area: "" }],
+            discount: "0",
+            discountType: "Ammount",
+            customerName: "",
+            finalAmount: "0",
+          },
   });
-  useEffect(() => {
-    id && reset({...shutterSellListArr[id],finalAmount:Total});
-  }, []);
   const {
     register: modalRegister,
     handleSubmit: modalHandalSubmit,
@@ -62,7 +69,6 @@ export default function MainForm() {
   function onSubmit(data: any) {
     id ? dispatch(updateItem({ id: id, data: data })) : dispatch(addItem(data));
     navigate.push("/List");
-    console.log(data);
   }
   const dListWatch: shutterDetailsInf[] | undefined = watch("dList");
 
@@ -71,7 +77,9 @@ export default function MainForm() {
   const Total = sumOfArray(
     dListWatch ? dListWatch.map((item: any) => Number(item.area)) : [0]
   );
-  useEffect(()=>{setValue('finalAmount',String(Total))},[Total])
+  useEffect(() => {
+    setValue("finalAmount", String(Total));
+  }, [Total]);
   const customers = useSelector((state: any) => state.customerDetails);
   const shutterList = useSelector((state: any) => state.shutterList);
   function sumOfArray(arr: number[]) {
@@ -81,7 +89,12 @@ export default function MainForm() {
   }
   return (
     <>
-    <BtnComp color="blue" text="Listing Page" onclick={()=>navigate.push("/List")} solid={true}/>
+      <BtnComp
+        color="blue"
+        text="Listing Page"
+        onclick={() => navigate.push("/List")}
+        solid={true}
+      />
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-1/2 mx-auto mt-5 flex flex-col"
@@ -111,7 +124,8 @@ export default function MainForm() {
                 label="Customer Name"
                 register={register}
                 registerName="customerName"
-                value={customers.map((item: any) => item.modal.Name)}
+                value={customers.customers.map((item: any) => item.modal.Name)}
+                // value={['hardik']}
                 error={errors}
               />
             </div>
@@ -126,6 +140,13 @@ export default function MainForm() {
           />
         </div>
         <CardComp title="shutter Details">
+          {/* <DndContext collisionDetection={closestCorners}>
+            <SortableContext strategy={ verticalListSortingStrategy} items={fields}>
+              {fields.map(field=>
+                <SortableComp id={field.id} />
+                )}
+            </SortableContext>
+          </DndContext> */}
           {fields.map((field, index) => (
             <div
               className="grid grid-cols-1 gap-6 sm:grid-cols-6 mt-4"
@@ -145,6 +166,7 @@ export default function MainForm() {
                 register={register}
                 registerName={`dList.${index}.width`}
                 type="text"
+                placeholder="0"
                 error={errors}
                 onchange={(e: any) => {
                   setValue(
@@ -162,6 +184,7 @@ export default function MainForm() {
                 register={register}
                 registerName={`dList.${index}.height`}
                 error={errors}
+                placeholder="0"
                 onchange={(e: any) => {
                   setValue(
                     `dList.${index}.area`,
@@ -182,11 +205,12 @@ export default function MainForm() {
                 isDisable={true}
                 type="text"
                 error={errors}
+                placeholder="0"
               />
 
               <BtnComp
                 text="Remove"
-                color="red"
+                color="blue"
                 onclick={() => {
                   remove(index);
                 }}
@@ -202,9 +226,9 @@ export default function MainForm() {
                       : [
                           {
                             shutterName: "",
-                            area: "0",
-                            height: "0",
-                            width: "0",
+                            area: "",
+                            height: "",
+                            width: "",
                           },
                         ]
                   );
@@ -215,13 +239,20 @@ export default function MainForm() {
           <button
             onClick={(e) => {
               e.preventDefault();
-              append({ shutterName: "", width: "0", height: "0", area: "0" });
+              append({ shutterName: "", width: "", height: "", area: "" });
             }}
             className="mt-5 focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
           >
             + Add
           </button>
-          <InputComp htmlFor="total" register={register} registerName="finalAmount" label="Total" type="text" isDisable={true}/>
+          <InputComp
+            htmlFor="total"
+            register={register}
+            registerName="finalAmount"
+            label="Total"
+            type="text"
+            isDisable={true}
+          />
         </CardComp>
         <CardComp title="Discount">
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 mt-4">

@@ -1,8 +1,22 @@
 "use client";
 
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 
-const initialState = [
+// interface customerAttribute {
+//   customer: {
+//     modal: {
+//       Name: string;
+//       Email: string;
+//       Phone: string;
+//     };
+//   }[];
+// }
+
+// const initialState: customerAttribute = {
+//   customer: [],
+// };
+
+const initialState = {customers:[
   {
     modal: { Name: "Hardik", Email: "hardik@gmail.com", Phone: "6355395891" },
   },
@@ -15,13 +29,13 @@ const initialState = [
   {
     modal: { Name: "Kishan", Email: "hardik@gmail.com", Phone: "9988776655" },
   },
-];
+]};
 export const customerSlice = createSlice({
   name: "customerDetails",
   initialState,
   reducers: {
     addCustomerDetails: (state, action) => {
-      state.push(action.payload);
+      state.customers.push(action.payload);
     },
   },
 });

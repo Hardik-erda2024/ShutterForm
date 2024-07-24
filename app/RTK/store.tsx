@@ -1,18 +1,23 @@
 "use client";
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import counterReducer from "../RTK/Features/demo/demoSlice";
-import customerReducer from "./Features/customer/customerSlice";
-import shutterSlice from "./Features/shutter/shutterSlice";
-import shutterSellSlice from "./Features/shutterSell/shutterSellSlice";
+import {configureStore } from "@reduxjs/toolkit";
+import { persistedReducer } from "./Persist/persistConfig";
+import {FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE, persistStore} from "redux-persist";
 
-const rootReducer = combineReducers({
-  counter: counterReducer,
-  customerDetails: customerReducer,
-  shutterList:shutterSlice,
-  shutterSellList:shutterSellSlice
-});
+// const rootReducer = combineReducers({
+//   counter: counterReducer,
+//   customerDetails: persistedReducer,
+//   shutterList:shutterSlice,
+//   shutterSellList:shutterSellSlice
+// });
 
 export const store = configureStore({
-  reducer: rootReducer,
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
 });
+export const persistor = persistStore(store)
 export type RootState = ReturnType<typeof store.getState>

@@ -65,8 +65,7 @@ export default function OrderList() {
                     Edit
                   </Link>
                   <BtnComp
-                    solid={true}
-                    color="red"
+                    color="blue"
                     text="Remove"
                     onclick={() => dispatch(deleteItem(index))}
                   />

@@ -11,7 +11,7 @@ export interface inputCompInf {
   isDisable?: boolean;
   onchange?: any;
   onblur?: Function;
-  error?:any
+  error?: any;
 }
 
 export interface btnInputComboCompInf {
@@ -35,7 +35,7 @@ export interface selectCompInf {
   htmlFor: string;
   registerName: string;
   register: any;
-  error:any
+  error: any;
 }
 
 export interface btnCompInf {
@@ -43,6 +43,7 @@ export interface btnCompInf {
   color: string;
   onclick: any;
   solid?: boolean;
+  customClass?: string;
 }
 
 export interface radioCompInf {
@@ -51,7 +52,7 @@ export interface radioCompInf {
   registerName: string;
   htmlFor?: string;
   value: string[];
-  error:any;
+  error: any;
 }
 
 export interface ModalCompInf {
@@ -66,10 +67,9 @@ export interface customerDetailsInf {
   modal: { Name: string; Email: string; Phone: string };
 }
 
-export interface shutterDetailsInf{
+export interface shutterDetailsInf {
   shutterName: string;
-  width:string;
-  height:string;
-  area?:string;
+  width: string;
+  height: string;
+  area?: string;
 }
-
